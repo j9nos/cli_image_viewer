@@ -26,7 +26,7 @@ impl CliPixel {
     }
 
     fn closest(other: &Rgba<u8>) -> &String {
-        let mut tree = BTreeMap::new();
+        let mut tree: BTreeMap<OrderedFloat<f64>, &String> = BTreeMap::new();
         for color in COLORS.iter() {
             let distance = CliPixel::distance(other, &color.rgba);
             tree.insert(distance, &color.code);
@@ -58,7 +58,7 @@ fn print_image(image: &DynamicImage) {
     for y in 0..height {
         for x in 0..width {
             print!(
-                "{}#{}",
+                "{} {}",
                 CliPixel::closest(&image.get_pixel(x, y)),
                 *RESET_ANSI
             );
@@ -70,17 +70,14 @@ fn print_image(image: &DynamicImage) {
 
 lazy_static! {
     static ref COLORS: Vec<CliPixel> = vec![
-        CliPixel::new(String::from("\x1b[1;30m"), image::Rgba([0, 0, 0, 1])),
-        CliPixel::new(String::from("\x1b[1;31m"), image::Rgba([255, 0, 0, 1])),
-        CliPixel::new(String::from("\x1b[1;32m"), image::Rgba([0, 255, 0, 1])),
-        CliPixel::new(String::from("\x1b[1;33m"), image::Rgba([255, 255, 0, 1])),
-        CliPixel::new(String::from("\x1b[1;34m"), image::Rgba([0, 0, 255, 1])),
-        CliPixel::new(String::from("\x1b[1;35m"), image::Rgba([255, 0, 255, 1])),
-        CliPixel::new(String::from("\x1b[1;36m"), image::Rgba([0, 255, 255, 1])),
-        CliPixel::new(
-            String::from("\x1b[1;37m"),
-            image::Rgba([255, 255, 255, 255])
-        )
+        CliPixel::new(String::from("\x1b[1;40m"), image::Rgba([0, 0, 0, 1])),
+        CliPixel::new(String::from("\x1b[1;41m"), image::Rgba([255, 0, 0, 1])),
+        CliPixel::new(String::from("\x1b[1;42m"), image::Rgba([0, 255, 0, 1])),
+        CliPixel::new(String::from("\x1b[1;43m"), image::Rgba([255, 255, 0, 1])),
+        CliPixel::new(String::from("\x1b[1;44m"), image::Rgba([0, 0, 255, 1])),
+        CliPixel::new(String::from("\x1b[1;45m"), image::Rgba([255, 0, 255, 1])),
+        CliPixel::new(String::from("\x1b[1;46m"), image::Rgba([0, 255, 255, 1])),
+        CliPixel::new(String::from("\x1b[1;47m"), image::Rgba([255, 255, 255, 1]))
     ];
     static ref RESET_ANSI: String = String::from("\x1b[0m");
 }
