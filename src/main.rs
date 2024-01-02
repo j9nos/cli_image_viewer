@@ -23,18 +23,17 @@ impl CliPixel {
     }
 
     fn closest(other: &Rgba<u8>) -> &String {
-        let first_element = COLORS.get(0).unwrap();
-        let mut closest_distance = CliPixel::distance(other, &first_element.rgba);
-        let mut closest_code = &first_element.code;
+        let mut closest_distance = CliPixel::distance(other, &COLORS.get(0).unwrap().rgba);
+        let mut closest_index = 0;
         for i in 1..COLORS.len() {
             let current_element = COLORS.get(i).unwrap();
             let current_distance = CliPixel::distance(other, &current_element.rgba);
             if current_distance < closest_distance {
                 closest_distance = current_distance;
-                closest_code = &current_element.code;
+                closest_index = i;
             }
         }
-        closest_code
+        &COLORS.get(closest_index).unwrap().code
     }
 }
 
