@@ -1,7 +1,6 @@
 use image::{imageops::FilterType, DynamicImage, GenericImageView, Rgba};
 use lazy_static::lazy_static;
-use ordered_float::OrderedFloat;
-use std::{collections::BTreeMap, env};
+use std::env;
 
 const MAX_BOUNDARY: u32 = 100;
 const MIN_BOUNDARY: u32 = 10;
@@ -16,22 +15,26 @@ impl CliPixel {
         Self { code, rgba }
     }
 
-    fn distance(left: &Rgba<u8>, right: &Rgba<u8>) -> OrderedFloat<f64> {
+    fn distance(left: &Rgba<u8>, right: &Rgba<u8>) -> f64 {
         let red_difference = f64::from(left[0]) - f64::from(right[0]);
         let green_difference = f64::from(left[1]) - f64::from(right[1]);
         let blue_difference = f64::from(left[2]) - f64::from(right[2]);
-        OrderedFloat(
-            (red_difference.powi(2) + green_difference.powi(2) + blue_difference.powi(2)).sqrt(),
-        )
+        (red_difference.powi(2) + green_difference.powi(2) + blue_difference.powi(2)).sqrt()
     }
 
     fn closest(other: &Rgba<u8>) -> &String {
-        let mut tree: BTreeMap<OrderedFloat<f64>, &String> = BTreeMap::new();
-        for color in COLORS.iter() {
-            let distance = CliPixel::distance(other, &color.rgba);
-            tree.insert(distance, &color.code);
+        let first_element = COLORS.get(0).unwrap();
+        let mut closest_distance = CliPixel::distance(other, &first_element.rgba);
+        let mut closest_code = &first_element.code;
+        for i in 1..COLORS.len() {
+            let current_element = COLORS.get(i).unwrap();
+            let current_distance = CliPixel::distance(other, &current_element.rgba);
+            if current_distance < closest_distance {
+                closest_distance = current_distance;
+                closest_code = &current_element.code;
+            }
         }
-        *tree.values().next().unwrap()
+        closest_code
     }
 }
 
